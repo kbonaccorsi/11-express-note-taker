@@ -11,6 +11,7 @@ const notes = require('./db/db.json');
 const app = express();
 //uses file system
 const fs = require('fs');
+const { title } = require('process');
 
 
 //MIDDLEWARE to connect front end
@@ -22,7 +23,7 @@ app.use(express.json());
 app.use(express.static('public'));
 
 
-app.get('*', (req, res) =>
+app.get('/', (req, res) =>
     res.sendFile(path.join(__dirname, '/public/index.html'))
 );
 
@@ -34,7 +35,7 @@ app.get('/notes', (req, res) =>
 //GET REQUEST LISTENER
 app.get('/api/notes', (req, res) => {
     console.info(`${req.method} request received to get notes`);
-    
+
     fs.readFile('./db/db.json', 'utf8', (err, data) => {
         if (err) {
             return console.error(err);
@@ -49,34 +50,33 @@ app.post('/api/notes', (req, res) => {
     console.info(`${req.method} received notes`);
 
     //prepare a response object to send back to the client
-    const { noteTitle, noteText } = req.body;
+    const { title, text } = req.body;
 
     //check that all required properties are present
-    if (noteTitle && noteText) {
+    if (title && text) {
         // save object as newNote
         const newNote = {
-            noteTitle,
-            noteText,
+            title,
+            text,
             noteId: uuid(),
         };
-        // turn the newNote into a string
-        const reviewString = JSON.stringify(newNote);
+
+        console.log(newNote);
         //write the string to a file
         fs.readFile('./db/db.json', 'utf8', (err, data) => {
             if (err) {
                 return console.error(err);
-            }
+            } else {
+                console.log('so far so good')
+                const noteArr = JSON.parse(data);
+                noteArr.push(newNote);
 
-            console.log(typeof data);
-            const noteArr = JSON.parse(data);
-            noteArr.push(newNote);
-            fs.writeFile('./db/db.json', JSON.stringify(noteArr, null, 2), (err) =>
-                err ? console.error(err)
-                    : console.log(
-                        `Note has been created and added to JSON file`
-                    )
-            );
-        })
+                fs.writeFile('./db/db.json', JSON.stringify(noteArr, null, 2), (err) =>
+                    err ? console.error(err)
+                        : console.log(`Note has been created and added to JSON file`)
+                );
+            }
+        });
 
         const response = {
             status: 'success',
