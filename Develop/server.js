@@ -11,8 +11,6 @@ const notes = require('./db/db.json');
 const app = express();
 //uses file system
 const fs = require('fs');
-//connect to index
-//const index =require('index.js')
 
 
 //MIDDLEWARE to connect front end
@@ -36,12 +34,15 @@ app.get('/notes', (req, res) =>
 //GET REQUEST LISTENER
 app.get('/api/notes', (req, res) => {
     console.info(`${req.method} request received to get notes`);
-    //send all notes to the client
-    return res.json(notes);
+    
+    fs.readFile('./db/db.json', 'utf8', (err, data) => {
+        if (err) {
+            return console.error(err);
+        }
+        //send all notes to the client
+        return res.json(notes);
+    });
 });
-//fs.readFile(/db.json) => GET  
-//json.stringify(notes)
-
 
 //POST REQUEST LISTENER
 app.post('/api/notes', (req, res) => {
@@ -61,27 +62,34 @@ app.post('/api/notes', (req, res) => {
         // turn the newNote into a string
         const reviewString = JSON.stringify(newNote);
         //write the string to a file
-        fs.writeFile('./db/db.json', reviewString, (err) =>
-            err ? console.error(err)
-                : console.log(
-                    `Note has been created and added to JSON file`
-                )
-        );
+        fs.readFile('./db/db.json', 'utf8', (err, data) => {
+            if (err) {
+                return console.error(err);
+            }
 
-const response = {
-    status: 'success',
-    body: newNote,
-};
+            console.log(typeof data);
+            const noteArr = JSON.parse(data);
+            noteArr.push(newNote);
+            fs.writeFile('./db/db.json', JSON.stringify(noteArr, null, 2), (err) =>
+                err ? console.error(err)
+                    : console.log(
+                        `Note has been created and added to JSON file`
+                    )
+            );
+        })
 
-console.log(response);
-res.status(201).json(response);
+        const response = {
+            status: 'success',
+            body: newNote,
+        };
+
+        console.log(response);
+        res.status(201).json(response);
     } else {
-    res.status(500).json('Error in making note');
-}
+        res.status(500).json('Error in making note');
+    }
 });
 
-//notesList.push(newNote)
-//return(newNote onto noteList)
 
 
 

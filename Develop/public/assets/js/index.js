@@ -181,3 +181,6 @@ if (window.location.pathname === '/notes') {
 }
 
 getAndRenderNotes();
+
+
+module.exports = index; 
