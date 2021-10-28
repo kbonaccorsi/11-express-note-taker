@@ -1,56 +1,118 @@
 //uses npm package express
 const express = require('express');
+const path = require('path');
+//location to view front end
+const PORT = 3001;
+//each note needs to have a unique id
+const uuid = require('./helpers/uuid.js');
+//database holding all of the notes
+const notes = require('./db/db.json');
+//
+const app = express();
 //uses file system
 const fs = require('fs');
-
-//each note needs to have a unique id
-const uuid = require('uuid');
-
-//connect to /db.json
-const notesData = require('./db/db.json');
-
 //connect to index
-const index =require('index.js')
-//http://localhost:3001;
-const POST = 3001;
-
-// //MIDDLEWARE to connect front end
-//app.get(*) from (./index.html)
-//app.get(/notes) from (./notes.html)
+//const index =require('index.js')
 
 
-// //GET
-//app.get(/api/notes) //fs.readFile(/db.json) => GET  //json.stringify(notes)
+//MIDDLEWARE to connect front end
+//look for queries in url
+app.use(express.urlencoded({ extended: true }));
+//req.body as json
+app.use(express.json());
+// connects the front end
+app.use(express.static('public'));
 
 
-// //POST
-//app.post(/api/notes)(receive- newNote) => {
-//res.body(newNote)
-//const newNote => {
-//     noteTitle,
-//     noteText,
-//     noteid(uuid);
-// }
-//fs.writeFile(/db.json) => POST //json(newNote)
+app.get('*', (req, res) =>
+    res.sendFile(path.join(__dirname, '/public/index.html'))
+);
+
+app.get('/notes', (req, res) =>
+    res.sendFile(path.join(__dirname, '/public/notes.html'))
+);
+
+
+//GET REQUEST LISTENER
+app.get('/api/notes', (req, res) => {
+    console.info(`${req.method} request received to get notes`);
+    //send all notes to the client
+    return res.json(notes);
+});
+//fs.readFile(/db.json) => GET  
+//json.stringify(notes)
+
+
+//POST REQUEST LISTENER
+app.post('/api/notes', (req, res) => {
+    console.info(`${req.method} received notes`);
+
+    //prepare a response object to send back to the client
+    const { noteTitle, noteText } = req.body;
+
+    //check that all required properties are present
+    if (noteTitle && noteText) {
+        // save object as newNote
+        const newNote = {
+            noteTitle,
+            noteText,
+            noteId: uuid(),
+        };
+        // turn the newNote into a string
+        const reviewString = JSON.stringify(newNote);
+        //write the string to a file
+        fs.writeFile('./db/db.json', reviewString, (err) =>
+            err ? console.error(err)
+                : console.log(
+                    `Note has been created and added to JSON file`
+                )
+        );
+
+const response = {
+    status: 'success',
+    body: newNote,
+};
+
+console.log(response);
+res.status(201).json(response);
+    } else {
+    res.status(500).json('Error in making note');
+}
+});
+
 //notesList.push(newNote)
 //return(newNote onto noteList)
-//};
 
 
-// //DELETE
-//app.delete(/api/notes/:id) (receive q param - noteId)
+
+//DELETE REQUEST LISTENER
+// app.delete('/api/notes/:noteId', (req, res) => {
+//     if (req.body && req.params.noteId) {
+//     console.info (`${req.method} deleting note`);
+//     const note_id = req.params.noteId;
+//     for (let i = 0; i < reviews.length; i++) {
+//         const noteListItems = noteList[i];
+//         if(noteListItems.noteId === note_id) {
+//             res.status(200).json(noteListItem);
+//             return;
+//         }
+//     }
+//     res.status(404).send('Note not found');
+//     } else {
+//         res.status(400).send('Note ID not provided');
+//     }
+// });
+
 //fs.readFile(/db.json) for each (noteListEl) containing noteId
 //fs.(remove) noteId from noteList
 //fs.rewriteFile(/db.json) => DELETE
 
 
-//app.listen(POST)
+app.listen(PORT, () =>
+    console.log(`Express server listening on port ${PORT}!`)
+);
 
-
-
-//index.html is welcome screen
-//get notes link works
-//notes link redirects to notes list/ new note form
+//notesList displays immediately after click
 //After entering noteTitle AND noteText, save button appears (await appear)
 // save icon pushes newNote object to existing noteList array
 //noteList array is rewritten to include newNote
