@@ -1,15 +1,19 @@
 # 11 Express.js: Note Taker
 
-Modify starter code to create an application called Note Taker that can be used to write and save notes. 
+  GitHub repo: https://github.com/kbonaccorsi/11-express-note-taker
 
-  Live URL: 
+  Link to video walkthrough: https://watch.screencastify.com/v/B2wUA6paqp0bV5bcBHne
 
-  GitHub repo: 
+  Heroku link/video: https://whispering-dawn-89165.herokuapp.com/notes
 
-  Link to video walkthrough: 
+## Description
+Modify starter code to create an application called Note Taker that can be used to write and save notes. Technology being used is NPM Express, and node.js.  For future development, this app can be coded to delete notes.
 
-  Heroku link/video: 
+## Usage
+This application is used to take notes, and keep track of them in one location.
 
-
-* Application console is free of errors.
-
+-Connect front end and back end
+-app.get to connect to get fetch call in index.js
+-app.post to connect to post fetch call in index.js
+-fs.readFile to read the current database in db.json
+-fs.writeFile to add the new notes to the database in db.json
