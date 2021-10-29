@@ -55,7 +55,7 @@ app.post('/api/notes', (req, res) => {
         const newNote = {
             title,
             text,
-            noteId: uuid(),
+            id: uuid(),
         };
 
         //write the string to a file
@@ -76,32 +76,32 @@ app.post('/api/notes', (req, res) => {
     }
 });
 
-//get a single note
-app.get('/api/notes/:noteId', (req, res) => {
-    console.info(`${req.method} request received to get note by id`);
-    for (let i = 0; i < notes.length; i++) {
-        const activeNote = notes[i];
-        if (activeNote.id === req.params.noteId) {
-            activeNote = {};
-            return;
-        }
-    }
-    res.status(404).send('Note not found');
-});
+// //get a single note
+// app.get('/api/notes/:noteId', (req, res) => {
+//     console.info(`${req.method} request received to get note by id`);
+//     for (let i = 0; i < notes.length; i++) {
+//         const activeNote = notes[i];
+//         if (activeNote.id === req.params.noteId) {
+//             activeNote = {};
+//             return;
+//         }
+//     }
+//     res.status(404).send('Note not found');
+// });
 
-app.post('api/notes/:noteId', (req, res) => {
-    if (req.body && req.params.noteId) {
-        console.info(`${req.method} request received for note adjustment`);
-        const note_id = req.params.noteId;
-        for (let i = 0; i < notes.length; i++) {
-            const activeNote = notes[i];
-            if (activeNote.id === note_id) {
-                activeNote = {};
-                return;
-            }
-        }
-    }
-});
+// app.post('api/notes/:noteId', (req, res) => {
+//     if (req.body && req.params.noteId) {
+//         console.info(`${req.method} request received for note adjustment`);
+//         const note_id = req.params.noteId;
+//         for (let i = 0; i < notes.length; i++) {
+//             const activeNote = notes[i];
+//             if (activeNote.id === note_id) {
+//                 activeNote = {};
+//                 return;
+//             }
+//         }
+//     }
+// });
 
 app.listen(PORT, () =>
     console.log(`Express server listening on port ${PORT}!`)
