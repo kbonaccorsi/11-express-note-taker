@@ -65,19 +65,20 @@ app.post('/api/notes', (req, res) => {
         fs.readFile('./db/db.json', 'utf8', (err, data) => {
             if (err) {
                 return console.error(err);
+                res.status(500).json('Error in making note');
             } else {
                 console.log('so far so good')
-                const noteArr = JSON.parse(data);
-                noteArr.push(newNote);
+                const notes = JSON.parse(data);
+                notes.push(newNote);
 
-                fs.writeFile('./db/db.json', JSON.stringify(noteArr, null, 2), (err) =>
-                    err ? console.error(err)
-                        : console.log(`Note has been created and added to JSON file`)
+                fs.writeFile('./db/db.json', JSON.stringify(notes, null, 2), (err) =>
+                    err ? res.status(500).json('Error in making note')
+                        : res.json(newNote)
                 );
             }
-            return newNote;
+            return notes;
         });
-        res.status(500).json('Error in making note');
+        
     }
 });
 
