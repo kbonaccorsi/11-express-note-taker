@@ -38,9 +38,11 @@ app.get('/api/notes', (req, res) => {
     fs.readFile('./db/db.json', 'utf8', (err, data) => {
         if (err) {
             return console.error(err);
-        }
+        }else {
+        const notes = JSON.parse(data);
         //send all notes to the client
         return res.json(notes);
+    }
     });
 });
 
@@ -76,7 +78,6 @@ app.post('/api/notes', (req, res) => {
                         : res.json(newNote)
                 );
             }
-            return notes;
         });
         
     }
