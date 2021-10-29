@@ -11,7 +11,6 @@ const notes = require('./db/db.json');
 const app = express();
 //uses file system
 const fs = require('fs');
-const { title } = require('process');
 
 
 //MIDDLEWARE to connect front end
@@ -34,7 +33,7 @@ app.get('/notes', (req, res) =>
 
 //GET REQUEST LISTENER
 app.get('/api/notes', (req, res) => {
-    console.info(`${req.method} request received to get notes`);
+    console.info(`GET request 37 received to get notes`);
 
     fs.readFile('./db/db.json', 'utf8', (err, data) => {
         if (err) {
@@ -76,16 +75,8 @@ app.post('/api/notes', (req, res) => {
                         : console.log(`Note has been created and added to JSON file`)
                 );
             }
+            return newNote;
         });
-
-        const response = {
-            status: 'success',
-            body: newNote,
-        };
-
-        console.log(response);
-        res.status(201).json(response);
-    } else {
         res.status(500).json('Error in making note');
     }
 });
