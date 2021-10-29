@@ -3,7 +3,7 @@ const express = require('express');
 const path = require('path');
 
 //local host port
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 //each note needs to have a unique id
 const uuid = require('./helpers/uuid.js');
 //assigns express to a variable
